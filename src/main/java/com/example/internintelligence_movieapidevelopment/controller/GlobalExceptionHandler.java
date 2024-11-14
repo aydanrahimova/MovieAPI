@@ -17,9 +17,10 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFound.class)
-    public ExceptionDto handler(ResourceNotFound resourceNotFound){
+    public ExceptionDto handler(ResourceNotFound resourceNotFound) {
         return new ExceptionDto(resourceNotFound.getMessage());
     }
 
@@ -37,13 +38,13 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)//409
     @ExceptionHandler(AlreadyExistException.class)
-    public ExceptionDto handler(AlreadyExistException alreadyExistException){
+    public ExceptionDto handler(AlreadyExistException alreadyExistException) {
         return new ExceptionDto(alreadyExistException.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ExceptionDto handler(IllegalArgumentException illegalArgumentException){
+    public ExceptionDto handler(IllegalArgumentException illegalArgumentException) {
         return new ExceptionDto(illegalArgumentException.getMessage());
     }
 }

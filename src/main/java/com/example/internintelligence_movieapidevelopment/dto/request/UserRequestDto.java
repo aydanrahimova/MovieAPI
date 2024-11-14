@@ -1,5 +1,6 @@
 package com.example.internintelligence_movieapidevelopment.dto.request;
 
+import com.example.internintelligence_movieapidevelopment.validation.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,7 @@ public class UserRequestDto {
     private String userName;
 
     @NotBlank(message = "Email is required")//email validation
+    @Email
     private String email;
 
     @NotBlank(message = "Password is required")

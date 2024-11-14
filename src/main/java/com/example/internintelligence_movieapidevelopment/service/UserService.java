@@ -1,6 +1,7 @@
 package com.example.internintelligence_movieapidevelopment.service;
 
 import com.example.internintelligence_movieapidevelopment.dao.entity.User;
+import com.example.internintelligence_movieapidevelopment.dao.entity.Watchlist;
 import com.example.internintelligence_movieapidevelopment.dao.repository.UserRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.ChangePasswordDto;
 import com.example.internintelligence_movieapidevelopment.dto.request.UserRequestDto;
@@ -37,6 +38,7 @@ public class UserService {
             throw new IllegalArgumentException("Illegal input for confirm password");
         }
         User user = userMapper.toEntity(requestDto);
+        user.setWatchlist(new Watchlist());
         userRepository.save(user);
         log.info("User is successfully added");
         return userMapper.toDto(user);
@@ -51,7 +53,13 @@ public class UserService {
     }
 
     public void deleteUser(Long id){
+        log.info("Attempting delete user ID '{}'",id);
+        if(!userRepository.existsById(id)){
+            log.info("Failed to delete: user ID '{}' doesn't exist",id);
+            throw new ResourceNotFound("USER_NOT_FOUND");
+        }
         userRepository.deleteById(id);
+        log.info("User is successfully deleted");
     }
 
     public void changePassword(Long id, ChangePasswordDto changePassword){

@@ -16,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -33,47 +32,68 @@ public class GenreService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
-
-    public GenreResponseDto getByID(Long id, int page, int size) {
-        log.info("Attempting to find genre with ID {}", id);
+    public GenreResponseDto getByID(Long id, Pageable pageable) {
         Genre genre = genreRepository.findById(id).orElseThrow(() -> {
             log.error("Genre with ID {} not found", id);
             return new ResourceNotFound("GENRE_NOT_FOUND");
         });
-        log.info("Genre found with ID: {}. Proceeding to retrieve movies.", id);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Movie> movies = movieRepository.findMovieByGenres_Id(id, pageable);
+
+        log.info("Genre found with ID: {}. Proceeding to retrieve paginated movies.", id);
+        Page<Movie> moviesPage = movieRepository.findByGenresId(id, pageable);
+        List<MovieOverviewDto> movieDtos = moviesPage.getContent().stream().map(movieMapper::toOverviewDto).toList();
+
+        log.info("Retrieved {} movies for Genre ID: {} on page {} of {} pages total", movieDtos.size(), id, moviesPage.getNumber() + 1, moviesPage.getTotalPages());
+
         GenreResponseDto responseDto = genreMapper.toDto(genre);
-        List<MovieOverviewDto> overviewDto = movies.stream().map(movieMapper::toOverviewDto).toList();
-        responseDto.setMovies(overviewDto);
+        responseDto.setMovies(movieDtos);
         return responseDto;
     }
 
-    public List<GenreOverviewDto> getAll(){
+    public List<GenreOverviewDto> getAll() {
         log.info("Attempting to get all genres");
         List<Genre> genres = genreRepository.findAll();
         return genres.stream().map(genreMapper::toOverviewDto).toList();
     }
 
-    public GenreResponseDto addGenre(GenreRequestDto requestDto) {
+    public GenreOverviewDto addGenre(GenreRequestDto requestDto) {
         log.info("Attempting to add new genre: {}", requestDto.getName());
-        if (genreRepository.existsByName(requestDto.getName())) {
+
+        if (genreRepository.existsByNameIgnoreCase(requestDto.getName())) {
             log.error("Failed to add genre. Genre '{}' already exists.", requestDto.getName());
             throw new AlreadyExistException("GENRE_ALREADY_EXISTS");
         }
+
         Genre genre = genreMapper.toEntity(requestDto);
         genreRepository.save(genre);
+
+        System.out.println(genreRepository.save(genre));
+
         log.info("Genre '{}' successfully added.", requestDto.getName());
-        return genreMapper.toDto(genre);
+
+        return genreMapper.toOverviewDto(genre);
     }
 
-    public void deleteByID(Long id){
+    public GenreOverviewDto editGenre(Long id, GenreRequestDto requestDto) {
+        log.info("Attempting edit genre with ID: {}", id);
+        Genre genre = genreRepository.findById(id).orElseThrow(() -> {
+            log.error("Failed to update genre. Genre ID '{}' doesn't exist", id);
+            return new ResourceNotFound("GENRE_NOT_FOUND");
+        });
+        genreMapper.mapForUpdate(genre, requestDto);
+        genreRepository.save(genre);
+        return genreMapper.toOverviewDto(genre);
+    }
+
+    public void deleteByID(Long id) {
         log.info("Attempting to delete genre with ID: {}", id);
+
         if (!genreRepository.existsById(id)) {
             log.error("Failed to delete genre. Genre '{}' doesn't exists.", id);
             throw new ResourceNotFound("GENRE_NOT_FOUND");
         }
+
         genreRepository.deleteById(id);
-        log.info("Genre with ID '{}' successfully deleted",id);
+        log.info("Genre with ID '{}' successfully deleted", id);
     }
+
 }

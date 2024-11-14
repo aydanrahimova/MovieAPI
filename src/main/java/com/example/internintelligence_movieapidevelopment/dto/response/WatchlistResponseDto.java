@@ -11,6 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WatchlistResponseDto {
-
     private List<MovieOverviewDto> movies;
 }

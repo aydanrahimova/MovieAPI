@@ -5,10 +5,16 @@ import com.example.internintelligence_movieapidevelopment.dto.request.GenreReque
 import com.example.internintelligence_movieapidevelopment.dto.response.GenreOverviewDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.GenreResponseDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface GenreMapper {
     Genre toEntity(GenreRequestDto requestDto);
+
     GenreResponseDto toDto(Genre genre);
+
     GenreOverviewDto toOverviewDto(Genre genre);
+
+    void mapForUpdate(@MappingTarget Genre genre, GenreRequestDto requestDto);
 }

@@ -7,14 +7,13 @@ import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewR
 import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewVoteRepository;
 import com.example.internintelligence_movieapidevelopment.dao.repository.UserRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.ReviewVoteRequestDto;
-import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
 import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.mapper.ReviewVoteMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,9 +23,25 @@ public class ReviewVoteService {
     private final ReviewRepository reviewRepository;
     private final ReviewVoteRepository reviewVoteRepository;
     private final UserRepository userRepository;
+    private final ReviewVoteMapper reviewVoteMapper;
 
 
     public void voteOnReview(Long reviewId, ReviewVoteRequestDto requestDto) {
+
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() -> {
+            log.error("Failed to vote on review: user ID '{}' doesn't exist", requestDto.getUserId());
+            return new ResourceNotFound("USER_NOT_FOUND");
+        });
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
+            log.error("Failed to vote on review: review ID '{}' doesn't exist", reviewId);
+            return new ResourceNotFound("REVIEW_NOT_FOUND");
+        });
+
+        ReviewVote vote = reviewVoteMapper.toEntity(requestDto);
+        vote.setUser(user);
+        vote.setReview(review);
+
+        reviewVoteRepository.save(vote);
 
     }
 

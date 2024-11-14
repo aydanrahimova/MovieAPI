@@ -6,6 +6,8 @@ import com.example.internintelligence_movieapidevelopment.dto.response.GenreResp
 import com.example.internintelligence_movieapidevelopment.service.GenreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +21,11 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping("/{id}")
-    public GenreResponseDto getMoviesByGenre(
+    public GenreResponseDto getGenreByID(
             @PathVariable Long id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        return genreService.getByID(id, page, size);
+        return genreService.getByID(id,pageable);
     }
 
     @GetMapping
@@ -34,8 +35,16 @@ public class GenreController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public GenreResponseDto addGenre(@RequestBody @Valid GenreRequestDto requestDto) {
+    public GenreOverviewDto addGenre(@RequestBody @Valid GenreRequestDto requestDto) {
         return genreService.addGenre(requestDto);
+    }
+
+    @PutMapping("/{id}")
+    public GenreOverviewDto editGenreByID(
+            @PathVariable Long id,
+            @RequestBody GenreRequestDto requestDto
+    ) {
+        return genreService.editGenre(id, requestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

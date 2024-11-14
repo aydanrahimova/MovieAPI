@@ -30,54 +30,57 @@ public class PersonService {
 
 
     public PersonResponseDto getByID(Long id) {
-        //best practice for logging?
-        log.info("Try to get person with ID {}",id);
-        Person person = personRepository.findById(id).orElseThrow(()->{
-            log.error("Person with ID {} not found",id);
+        log.info("Attempting get person with ID {}", id);
+        Person person = personRepository.findById(id).orElseThrow(() -> {
+            log.error("Person with ID {} not found", id);
             return new ResourceNotFound("PERSON_NOT_FOUND");
         });
         log.info("Person found with ID: {}. Proceeding to retrieve movies.", id);
-        List<Movie> movies = movieRepository.findMovieByPeople_Id(id);
-        List<MovieOverviewDto> movieOverview = movies.stream().map(movie -> movieMapper.toOverviewDto(movie)).toList();
+        List<Movie> movies = movieRepository.findMovieByCastId(id);
+        List<MovieOverviewDto> movieOverview = movies.stream().map(movieMapper::toOverviewDto).toList();
         PersonResponseDto responseDto = personMapper.toDto(person);
         responseDto.setMovies(movieOverview);
-        log.info("Successfully retrieved person with {} id",id);
+        log.info("Successfully retrieved person with {} id", id);
         return responseDto;
     }
 
     public PersonResponseDto addPerson(PersonRequestDto requestDto) {
-        log.info("Try to add new person.");
+        log.info("Attempting add new person.");
         Person person = personMapper.toEntity(requestDto);
-        if(personRepository.existsByFullNameAndBirthDate(person.getFullName(),person.getBirthDate())){
+        if (personRepository.existsByFullNameIgnoreCaseAndBirthDate(person.getFullName(), person.getBirthDate())) {
             log.info("Person is already exist");
             throw new AlreadyExistException("PERSON_ALREADY_EXISTS");
         }
         log.info("Try to save new person.");
         personRepository.save(person);
-        log.info("Person {} is successfully saved",requestDto.getFullName());
+        log.info("Person {} is successfully saved", requestDto.getFullName());
         return personMapper.toDto(person);
     }
 
-    public void deleteByID(Long id){
-        log.info("Try to delete a person with {} id",id);
+    public PersonResponseDto updateByID(Long id, PersonRequestDto requestDto) {
+        log.info("Attempting update a person with {} id", id);
+        Person person = personRepository.findById(id).orElseThrow(() -> {
+            log.error("Failed to update: Person with ID {} not found.", id);
+            return new ResourceNotFound("PERSON_NOT_FOUND");
+        });
+
+        log.info("Try to save an updated person");
+        personMapper.mapForUpdate(person, requestDto);
+        personRepository.save(person);
+
+        log.info("Successfully updated person with ID: {}", id);
+
+        return personMapper.toDto(person);
+    }
+
+    public void deleteByID(Long id) {
+        log.info("Attempting delete a person with ID '{}'", id);
         if (!personRepository.existsById(id)) {
             log.error("Failed to delete: Person with ID {} not found.", id);
             throw new ResourceNotFound("PERSON_NOT_FOUND");
         }
         personRepository.deleteById(id);
-        log.info("Successfully deleted person with ID: {}", id);
+        log.info("Successfully deleted person with ID: '{}'", id);
     }
 
-    public PersonResponseDto updateByID(Long id,PersonRequestDto requestDto){
-        log.info("Try to update a person with {} id",id);
-        if (!personRepository.existsById(id)) {
-            log.error("Failed to update: Person with ID {} not found.", id);
-            throw new ResourceNotFound("PERSON_NOT_FOUND");
-        }
-        Person updatedPerson = personMapper.toEntity(requestDto);
-        log.info("Try to save an updated person");
-        personRepository.save(updatedPerson);
-        log.info("Successfully updated person with ID: {}",id);
-        return personMapper.toDto(updatedPerson);
-    }
 }

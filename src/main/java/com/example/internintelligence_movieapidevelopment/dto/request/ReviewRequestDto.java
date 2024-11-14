@@ -19,5 +19,7 @@ public class ReviewRequestDto {
     @Min(1)
     @Max(10)
     @NotNull(message = "Rating is required")
-    private int rating;      // Rating score, e.g., 1-5
+    private Integer rating;
+    private Boolean hasSpoiler;
+
 }

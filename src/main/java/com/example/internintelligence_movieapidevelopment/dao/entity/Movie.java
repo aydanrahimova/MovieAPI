@@ -9,9 +9,10 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "movie")
+@Table(name = "movies")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private AgeRating ageRating;
     private Integer duration;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "genre_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -36,14 +37,14 @@ public class Movie {
     )
     private List<Genre> genres;
 
-    @OneToMany(mappedBy = "movie",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "person_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private List<Person> people;
+    private List<Person> cast;
 }

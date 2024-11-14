@@ -18,8 +18,8 @@ public class ReviewVoteController {
     public ResponseEntity<String> voteReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewVoteRequestDto requestDto
-    ){
-        reviewVoteService.voteOnReview(reviewId,requestDto);
+    ) {
+        reviewVoteService.voteOnReview(reviewId, requestDto);
         return ResponseEntity.ok("Vote registered successfully.");
     }
 }

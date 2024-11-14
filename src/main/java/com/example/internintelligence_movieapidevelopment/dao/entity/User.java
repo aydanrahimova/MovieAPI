@@ -27,4 +27,6 @@ public class User {
     private String password;
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Watchlist watchlist;
 }

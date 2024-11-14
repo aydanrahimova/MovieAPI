@@ -3,6 +3,7 @@ package com.example.internintelligence_movieapidevelopment.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -11,5 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class GenreResponseDto {
     private String name;
-    private List<MovieOverviewDto> movies;//page
+    private String description;
+    private List<MovieOverviewDto> movies;
 }

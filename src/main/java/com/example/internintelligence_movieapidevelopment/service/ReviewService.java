@@ -2,12 +2,15 @@ package com.example.internintelligence_movieapidevelopment.service;
 
 import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Review;
+import com.example.internintelligence_movieapidevelopment.dao.entity.ReviewVote;
 import com.example.internintelligence_movieapidevelopment.dao.entity.User;
 import com.example.internintelligence_movieapidevelopment.dao.repository.MovieRepository;
 import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewRepository;
+import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewVoteRepository;
 import com.example.internintelligence_movieapidevelopment.dao.repository.UserRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.ReviewRequestDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.ReviewResponseDto;
+import com.example.internintelligence_movieapidevelopment.enums.VoteType;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
 import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
 import com.example.internintelligence_movieapidevelopment.mapper.ReviewMapper;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -31,6 +35,7 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
+    private final ReviewVoteRepository reviewVoteRepository;
 
     public ReviewResponseDto addReview(Long movieId, ReviewRequestDto requestDto) {
         log.info("Attempting to add review to movie with ID: {}", movieId);
@@ -111,7 +116,24 @@ public class ReviewService {
             return new ResourceNotFound("REVIEW_NOT_FOUND");
         });
 
+        List<ReviewVote> votes = reviewVoteRepository.findByReview(review);
+
+
+        long helpfulVotes = votes
+                .stream()
+                .filter(vote ->vote.getVoteType()== VoteType.HELPFUL)
+                .count();
+
+        long unhelpfulVotes = votes
+                .stream()
+                .filter(vote -> vote.getVoteType()==VoteType.UNHELPFUL)
+                .count();
+
         ReviewResponseDto reviewResponseDto = reviewMapper.toDto(review);
+        reviewResponseDto.setHelpfulVotes(helpfulVotes);
+        reviewResponseDto.setUnhelpfulVotes(unhelpfulVotes);
+
+
 //        reviewResponseDto.setUserName();//security
 
 //        for()
@@ -121,6 +143,8 @@ public class ReviewService {
     public Page<ReviewResponseDto> getReviews(Long movieId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewRepository.findAllByMovieId(movieId, pageable);
+        //her review ucun like-larin saylari
+
         return reviews.map(reviewMapper::toDto);
     }
 

@@ -25,6 +25,6 @@ public class Person {
     private PersonRole role;
     private LocalDate birthDate;
     private String biography;
-    @ManyToMany(mappedBy = "people")
+    @ManyToMany(mappedBy = "cast",fetch = FetchType.LAZY)
     private List<Movie> movies;
 }

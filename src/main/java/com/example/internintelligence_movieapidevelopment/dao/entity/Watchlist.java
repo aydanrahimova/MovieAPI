@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "watchlist")
 @Getter
@@ -17,14 +19,9 @@ public class Watchlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "watchlist")
     private User user;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "watchlist")
+    private List<WatchlistMovie> watchlistMovies;
 }
-//    @ManyToMany
-//    @JoinTable(
-//            name = "watchlist_movie",
-//            joinColumns = @JoinColumn(name = "watchlist_id"),
-//            inverseJoinColumns = @JoinColumn(name = "movie_id"),
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"watchlist_id", "movie_id"})
-//    )
-//    private List<WatchlistMovie> watchlistMovies;

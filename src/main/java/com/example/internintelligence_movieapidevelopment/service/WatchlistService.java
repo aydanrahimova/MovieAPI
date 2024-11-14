@@ -15,6 +15,10 @@ import com.example.internintelligence_movieapidevelopment.exception.ResourceNotF
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,42 +39,26 @@ public class WatchlistService {
     public void addToWatchlist(Long userId, Long movieId) {
         log.info("Attempting to add movie ID '{}' to user ID '{}' watchlist", movieId, userId);
 
-        // Fetch Movie and handle if it doesn't exist
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> {
             log.error("Failed to add movie to watchlist: movie ID '{}' not found", movieId);
             return new ResourceNotFound("MOVIE_NOT_FOUND");
         });
-        System.out.println(movie.getId());
 
-        // Fetch User and handle if it doesn't exist
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.error("Failed to add movie to watchlist: user ID '{}' not found", userId);
             return new ResourceNotFound("USER_NOT_FOUND");
         });
 
-        // Retrieve the Watchlist for the user, or create one if it doesn't exist
-        Watchlist watchlist = watchlistRepository.findByUser(user)
-                .orElseGet(() -> {
-                    Watchlist newWatchlist = new Watchlist(null, user);
-                    return watchlistRepository.save(newWatchlist); // Save new watchlist immediately
-                });
-        System.out.println(movie.getId());
+        Watchlist watchlist = user.getWatchlist();
 
-        // Check if movie is already in watchlist
         if (watchlistMovieRepository.existsByWatchlistAndMovie(watchlist, movie)) {
             log.error("Movie already exists in the watchlist.");
             throw new AlreadyExistException("MOVIE_ALREADY_EXISTS");
         }
-        System.out.println(movie.getId());
 
         // Create and save the WatchlistMovie entity to establish the link
         WatchlistMovie watchlistMovie = new WatchlistMovie(null, watchlist, movie, LocalDateTime.now());
         watchlistMovieRepository.save(watchlistMovie);
-        System.out.println(movie.getId());
-
-
-
-        // Update the in-memory Watchlist with the new movie association if needed
         System.out.println(movie.getId());
 
         log.info("Successfully added movie ID '{}' to user ID '{}' watchlist", movieId, userId);
@@ -79,7 +67,30 @@ public class WatchlistService {
 
 
 
-    public WatchlistResponseDto getWatchlist(Long userId) {
+//    public WatchlistResponseDto getWatchlist(Long userId) {
+//        log.info("Attempting to get user's ID '{}' watchlist", userId);
+//
+//        User user = userRepository.findById(userId).orElseThrow(() -> {
+//            log.error("Failed to get watchlist: user ID '{}' not found", userId);
+//            return new ResourceNotFound("USER_NOT_FOUND");
+//        });
+//
+//        Watchlist watchlist = user.getWatchlist();
+//        List<WatchlistMovie> watchlistMovie = watchlistMovieRepository.findByWatchlist(watchlist);
+//        List<MovieOverviewDto> movies = watchlistMovie.stream()
+//                .map(wm -> new MovieOverviewDto(
+//                        wm.getMovie().getTitle(),
+//                        wm.getMovie().getReleaseDate()
+//                ))
+//                .toList();
+//        WatchlistResponseDto watchlistResponseDto = new WatchlistResponseDto();
+//        watchlistResponseDto.setMovies(movies);
+//
+//        return watchlistResponseDto;
+//    }
+
+
+    public Page<MovieOverviewDto> getWatchlist(Long userId, int page, int size,String sortBy,String sortDirection) {
         log.info("Attempting to get user's ID '{}' watchlist", userId);
 
         User user = userRepository.findById(userId).orElseThrow(() -> {
@@ -87,20 +98,20 @@ public class WatchlistService {
             return new ResourceNotFound("USER_NOT_FOUND");
         });
 
-        Watchlist watchlist = watchlistRepository.findByUser(user)
-                .orElse(new Watchlist(null,user));
-        List<WatchlistMovie> watchlistMovie = watchlistMovieRepository.findByWatchlist(watchlist);
-        List<MovieOverviewDto> movieDTOs = watchlistMovie.stream()
-                .map(wm -> new MovieOverviewDto(
-                        wm.getMovie().getTitle(),
-                        wm.getMovie().getReleaseDate()
-                ))
-                .toList();
-        WatchlistResponseDto watchlistResponseDto = new WatchlistResponseDto();
-        watchlistResponseDto.setMovies(movieDTOs);
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
 
-        return watchlistResponseDto;
+
+        Pageable pageable = PageRequest.of(page, size,Sort.by(direction,sortBy));
+
+        Page<WatchlistMovie> watchlistMoviesPage = watchlistMovieRepository.findByWatchlist(user.getWatchlist(), pageable);
+
+
+        return watchlistMoviesPage.map(wm -> new MovieOverviewDto(
+                wm.getMovie().getTitle(),
+                wm.getMovie().getReleaseDate()
+        ));
     }
+
 
 
     public void deleteFromWatchlist(Long userId, Long movieId) {

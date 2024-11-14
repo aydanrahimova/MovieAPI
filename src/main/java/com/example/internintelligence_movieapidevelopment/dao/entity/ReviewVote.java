@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "votes")
+@Table(name = "review_votes")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewVote {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")

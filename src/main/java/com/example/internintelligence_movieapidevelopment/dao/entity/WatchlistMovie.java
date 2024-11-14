@@ -20,7 +20,7 @@ public class WatchlistMovie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "watchlist_id")
     private Watchlist watchlist;
 

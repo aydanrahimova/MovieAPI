@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "review")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class Review {//commentda filmin id-si olmalidi
     private Integer rating;
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime createTime;//bunu da databaseda now eleyirik
+    private LocalDateTime createTime;
     //add elemek ucun chatda var-security de lazim
 
     //principal lazimdi user ucun
@@ -33,7 +34,7 @@ public class Review {//commentda filmin id-si olmalidi
     @ManyToOne
     @JoinColumn(name = "movie_id")
     private Movie movie;
-    @OneToMany
-    private List<ReviewVote> votes;
+//    @OneToMany
+//    private List<ReviewVote> votes;
     private boolean hasSpoiler;
 }

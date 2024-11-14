@@ -14,6 +14,6 @@ public class ReviewResponseDto {
     private Integer rating;
     private String content;
     private LocalDateTime createTime;
-    private Integer helpfulVotes;
-    private Integer unhelpfulVotes;
+    private Long helpfulVotes;
+    private Long unhelpfulVotes;
 }
