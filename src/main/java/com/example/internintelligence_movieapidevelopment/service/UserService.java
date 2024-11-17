@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class UserService {
     public UserResponseDto addUser(UserRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             log.warn("User with {} email is exist", requestDto.getEmail());
-            throw new AlreadyExistException("User with that email is exist");
+            throw new AlreadyExistException("User with that email exists");
         }
         if (userRepository.existsByUserName(requestDto.getUserName())) {
             log.warn("User with {} username is exist", requestDto.getUserName());
@@ -40,16 +42,26 @@ public class UserService {
         User user = userMapper.toEntity(requestDto);
         user.setWatchlist(new Watchlist());
         userRepository.save(user);
-        log.info("User is successfully added");
+        log.info("User successfully added");
         return userMapper.toDto(user);
     }
 
     public UserResponseDto getUser(Long id){
+        log.info("Attempting get user with {} ID",id);
         User user = userRepository.findById(id).orElseThrow(()->{
             log.warn("User with {} id is not found",id);
             return new ResourceNotFound("USER_NOT_FOUND");
         });
         return userMapper.toDto(user);
+    }
+
+    public List<UserResponseDto> getUsers() {
+        log.info("Attempting get all users...");
+        List<User> users = userRepository.findAll();
+        log.info("All users returned.");
+        return users.stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     public void deleteUser(Long id){
@@ -59,7 +71,7 @@ public class UserService {
             throw new ResourceNotFound("USER_NOT_FOUND");
         }
         userRepository.deleteById(id);
-        log.info("User is successfully deleted");
+        log.info("User successfully deleted");
     }
 
     public void changePassword(Long id, ChangePasswordDto changePassword){
@@ -79,4 +91,8 @@ public class UserService {
         log.info("User's password is successfully changed");
         user.setPassword(changePassword.getNewPassword());
     }
+
+
+
+
 }

@@ -6,17 +6,16 @@ import com.example.internintelligence_movieapidevelopment.dto.response.MovieOver
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieResponseDto;
 import org.mapstruct.*;
 
-@Mapper(
-        componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
+
+@Mapper(componentModel = "spring")
 public interface MovieMapper {
+
     @Mapping(target = "peopleOverview", source = "cast")
     MovieResponseDto toDto(Movie movie);
 
-    Movie toEntity(MovieRequestDto dto);
+    Movie toEntity(MovieRequestDto movieRequestDto);
 
     MovieOverviewDto toOverviewDto(Movie movie);
 
-    void mapForUpdate(@MappingTarget Movie movie, MovieRequestDto requestDto);
+    void mapForUpdate(@MappingTarget Movie movie, MovieRequestDto movieRequestDto);
 }

@@ -1,10 +1,8 @@
 package com.example.internintelligence_movieapidevelopment.dao.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -25,8 +23,6 @@ public class Review {//commentda filmin id-si olmalidi
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createTime;
-    //add elemek ucun chatda var-security de lazim
-
     //principal lazimdi user ucun
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,7 +30,8 @@ public class Review {//commentda filmin id-si olmalidi
     @ManyToOne
     @JoinColumn(name = "movie_id")
     private Movie movie;
-//    @OneToMany
-//    private List<ReviewVote> votes;
-    private boolean hasSpoiler;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ReviewVote> votes;
+    @NotNull(message = "Has spoiler is required.")
+    private Boolean hasSpoiler;
 }

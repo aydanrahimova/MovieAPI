@@ -20,7 +20,7 @@ public class WatchlistMovie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "watchlist_id")
     private Watchlist watchlist;
 
@@ -30,5 +30,5 @@ public class WatchlistMovie {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime createTime; // Timestamp for when this movie was added to the watchlist
+    private LocalDateTime addAt; // Timestamp for when this movie was added to the watchlist
 }

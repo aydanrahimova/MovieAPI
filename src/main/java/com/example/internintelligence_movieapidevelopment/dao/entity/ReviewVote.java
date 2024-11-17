@@ -24,5 +24,5 @@ public class ReviewVote {
     @JoinColumn(name = "review_id")
     private Review review;
     @Enumerated(EnumType.STRING)
-    private VoteType voteType;  // Helpful, Unhelpful, Like, Dislike
+    private VoteType voteType;
 }

@@ -6,6 +6,7 @@ import com.example.internintelligence_movieapidevelopment.dao.repository.MovieRe
 import com.example.internintelligence_movieapidevelopment.dao.repository.PersonRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.PersonRequestDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.PersonOverviewDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.PersonResponseDto;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
 import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
@@ -14,6 +15,8 @@ import com.example.internintelligence_movieapidevelopment.mapper.PersonMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +30,6 @@ public class PersonService {
     private final PersonMapper personMapper;
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
-
 
     public PersonResponseDto getByID(Long id) {
         log.info("Attempting get person with ID {}", id);
@@ -44,16 +46,22 @@ public class PersonService {
         return responseDto;
     }
 
+    public Page<PersonOverviewDto> getAll(Pageable pageable) {
+        log.info("Attempting get all people.");
+        Page<Person> people = personRepository.findAll(pageable);
+        return people.map(personMapper::toOverviewDto);
+    }
+
     public PersonResponseDto addPerson(PersonRequestDto requestDto) {
         log.info("Attempting add new person.");
         Person person = personMapper.toEntity(requestDto);
         if (personRepository.existsByFullNameIgnoreCaseAndBirthDate(person.getFullName(), person.getBirthDate())) {
-            log.info("Person is already exist");
+            log.info("Person {} is already exist",requestDto.getFullName());
             throw new AlreadyExistException("PERSON_ALREADY_EXISTS");
         }
         log.info("Try to save new person.");
         personRepository.save(person);
-        log.info("Person {} is successfully saved", requestDto.getFullName());
+        log.info("Person {} successfully saved", requestDto.getFullName());
         return personMapper.toDto(person);
     }
 

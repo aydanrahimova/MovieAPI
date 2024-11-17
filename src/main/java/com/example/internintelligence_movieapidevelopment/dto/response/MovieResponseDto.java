@@ -20,5 +20,5 @@ public class MovieResponseDto {
     private Integer duration;
     private List<PersonOverviewDto> peopleOverview;
     private List<GenreOverviewDto> genres;
-    private Double IMDbRating;//average hesablayir commentlerden
+    private Double IMDbRating;
 }

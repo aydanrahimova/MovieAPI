@@ -23,7 +23,7 @@ public class ReviewController {
         return reviewService.getReviewByID(movieId,reviewId);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public Page<ReviewResponseDto> getReviews(
             @PathVariable Long movieId,
             @RequestParam int page,
@@ -33,7 +33,7 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/add")
     public ReviewResponseDto addReview(
             @PathVariable(name = "movieId") Long movieId,
             @Valid @RequestBody ReviewRequestDto requestDto
@@ -41,7 +41,7 @@ public class ReviewController {
         return reviewService.addReview(movieId,requestDto);
     }
 
-    @PatchMapping("/{reviewId}")
+    @PatchMapping("/update/{reviewId}")
     public ReviewResponseDto editReview(
             @PathVariable(name = "movieId") Long movieId,
             @PathVariable(name = "reviewId") Long reviewId,
@@ -51,7 +51,7 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/delete/{reviewId}")
     public void deleteReview(
             @PathVariable(name = "movieId") Long movieId,
             @PathVariable(name = "reviewId") Long reviewId

@@ -25,7 +25,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Review> reviews;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Watchlist watchlist;

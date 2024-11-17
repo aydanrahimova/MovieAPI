@@ -2,13 +2,13 @@ package com.example.internintelligence_movieapidevelopment.controller;
 
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieFilterDto;
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieRequestDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieResponseDto;
 import com.example.internintelligence_movieapidevelopment.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,31 +25,31 @@ public class MovieController {
         return movieService.getMovieById(id);
     }
 
-    @GetMapping
-    public Page<MovieResponseDto> getMovies(
-            @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
+    @GetMapping("/get-all")
+    public Page<MovieOverviewDto> getMovies(
+            @PageableDefault Pageable pageable,
             MovieFilterDto movieFilterDto
     ) {
         return movieService.getMovies(pageable, movieFilterDto);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     public MovieResponseDto addMovie(
-            @RequestBody @Valid MovieRequestDto movieRequestDto
+            @Valid @RequestBody MovieRequestDto movieRequestDto
     ) {
         return movieService.addMovie(movieRequestDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public MovieResponseDto updateMovie(
             @PathVariable Long id,
-            @RequestBody @Valid MovieRequestDto movieRequestDto
+            @Valid @RequestBody MovieRequestDto movieRequestDto
     ) {
         return movieService.updateMovie(id, movieRequestDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);

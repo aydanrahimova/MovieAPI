@@ -92,12 +92,9 @@ public class ReviewService {
             return new ResourceNotFound("REVIEW_NOT_FOUND");
         });
 
-        Review editedReview = reviewMapper.toEntity(updateDto);
-        editedReview.setUser(user);
-        editedReview.setMovie(movie);
-        editedReview.setCreateTime(LocalDateTime.now());
 
-        reviewRepository.save(editedReview);
+        reviewMapper.mapForUpdate(review,updateDto);
+
         log.info("Successfully edited.");
 
         return reviewMapper.toDto(review);

@@ -38,14 +38,17 @@ public class GenreService {
             return new ResourceNotFound("GENRE_NOT_FOUND");
         });
 
-        log.info("Genre found with ID: {}. Proceeding to retrieve paginated movies.", id);
+        log.info("Genre found with ID: {}. Proceeding to retrieve movies...", id);
         Page<Movie> moviesPage = movieRepository.findByGenresId(id, pageable);
-        List<MovieOverviewDto> movieDtos = moviesPage.getContent().stream().map(movieMapper::toOverviewDto).toList();
-
-        log.info("Retrieved {} movies for Genre ID: {} on page {} of {} pages total", movieDtos.size(), id, moviesPage.getNumber() + 1, moviesPage.getTotalPages());
-
+        List<MovieOverviewDto> movieOverview = moviesPage.getContent().stream().map(movieMapper::toOverviewDto).toList();
         GenreResponseDto responseDto = genreMapper.toDto(genre);
-        responseDto.setMovies(movieDtos);
+        responseDto.setMovies(movieOverview);
+        responseDto.setPageSize(moviesPage.getSize());
+        responseDto.setTotalPages(moviesPage.getTotalPages());
+        responseDto.setCurrentPage(moviesPage.getNumber());
+
+        log.info("Returning genre response for Genre ID {} with {} movies.", id, moviesPage.getTotalElements());
+
         return responseDto;
     }
 
@@ -56,7 +59,7 @@ public class GenreService {
     }
 
     public GenreOverviewDto addGenre(GenreRequestDto requestDto) {
-        log.info("Attempting to add new genre: {}", requestDto.getName());
+        log.info("Attempting add new genre: {}", requestDto.getName());
 
         if (genreRepository.existsByNameIgnoreCase(requestDto.getName())) {
             log.error("Failed to add genre. Genre '{}' already exists.", requestDto.getName());
@@ -65,8 +68,6 @@ public class GenreService {
 
         Genre genre = genreMapper.toEntity(requestDto);
         genreRepository.save(genre);
-
-        System.out.println(genreRepository.save(genre));
 
         log.info("Genre '{}' successfully added.", requestDto.getName());
 

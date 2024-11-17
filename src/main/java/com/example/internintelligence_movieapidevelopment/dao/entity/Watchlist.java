@@ -23,5 +23,5 @@ public class Watchlist {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "watchlist")
-    private List<WatchlistMovie> watchlistMovies;
+    private List<WatchlistMovie> movies;
 }

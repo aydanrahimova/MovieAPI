@@ -23,32 +23,32 @@ public class GenreController {
     @GetMapping("/{id}")
     public GenreResponseDto getGenreByID(
             @PathVariable Long id,
-            @PageableDefault(page = 0, size = 10) Pageable pageable
+            @PageableDefault Pageable pageable
     ) {
         return genreService.getByID(id,pageable);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public List<GenreOverviewDto> getAll() {
         return genreService.getAll();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public GenreOverviewDto addGenre(@RequestBody @Valid GenreRequestDto requestDto) {
+    @PostMapping("/add")
+    public GenreOverviewDto addGenre(@Valid @RequestBody GenreRequestDto requestDto) {
         return genreService.addGenre(requestDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public GenreOverviewDto editGenreByID(
             @PathVariable Long id,
-            @RequestBody GenreRequestDto requestDto
+            @Valid @RequestBody GenreRequestDto requestDto
     ) {
         return genreService.editGenre(id, requestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteByID(@PathVariable Long id) {
         genreService.deleteByID(id);
     }
