@@ -4,6 +4,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   datasource:
     username: postgres
@@ -11,3 +13,4 @@ spring:
     password: 2810
   liquibase:
     change-log: classpath:/liquibase/changelog-master.yml
+
