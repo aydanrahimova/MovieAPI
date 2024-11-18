@@ -1,5 +1,6 @@
 package com.example.internintelligence_movieapidevelopment.controller;
 
+import com.example.internintelligence_movieapidevelopment.client.TmdbMovieResponse;
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieFilterDto;
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieRequestDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
@@ -14,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/movie")
 @RequiredArgsConstructor
 public class MovieController {
 
@@ -31,6 +32,21 @@ public class MovieController {
             MovieFilterDto movieFilterDto
     ) {
         return movieService.getMovies(pageable, movieFilterDto);
+    }
+
+    @GetMapping("/popular")
+    public TmdbMovieResponse getPopularMovies(@RequestParam int page) {
+        return movieService.getPopularMovies(page);
+    }
+
+    @GetMapping("/top_rated")
+    public TmdbMovieResponse getTopRatedMovies(@RequestParam int page){
+        return movieService.getTopRatedMovies(page);
+    }
+
+    @GetMapping("/upcoming")
+    public TmdbMovieResponse getUpcomingMovies(@RequestParam int page){
+        return movieService.getUpcomingMovies(page);
     }
 
     @PostMapping("/add")

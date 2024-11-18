@@ -30,9 +30,9 @@ public class User {
     private List<Review> reviews;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Watchlist watchlist;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "authority_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Authority> roles;
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "authority_user",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id"))
+//    private Set<Authority> roles;
 }

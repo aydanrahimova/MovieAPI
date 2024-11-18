@@ -14,3 +14,9 @@ spring:
   liquibase:
     change-log: classpath:/liquibase/changelog-master.yml
 
+tmdb:
+  url: https://api.themoviedb.org/3
+  api-key: 4dfaefed514914add78d122b66879082
+  default-language: en-US
+
+

@@ -1,5 +1,7 @@
 package com.example.internintelligence_movieapidevelopment.service;
 
+import com.example.internintelligence_movieapidevelopment.client.TmdbClient;
+import com.example.internintelligence_movieapidevelopment.client.TmdbMovieResponse;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Genre;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Person;
@@ -19,6 +21,7 @@ import com.example.internintelligence_movieapidevelopment.service.specification.
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +38,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MovieService {
 
+
+    @Value("${tmdb.api-key}")
+    private String apiKey;
+
+    @Value("${tmdb.default-language}")
+    private String language;
+
+    private final TmdbClient tmdbClient;
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
     private final PersonRepository personRepository;
@@ -69,6 +80,18 @@ public class MovieService {
 
         log.info("Filtered movies are returned");
         return movies.map(movieMapper::toOverviewDto);
+    }
+
+    public TmdbMovieResponse getPopularMovies(int page){
+        return tmdbClient.getPopularMovies(apiKey,language,page);
+    }
+
+    public TmdbMovieResponse getTopRatedMovies(int page) {
+        return tmdbClient.getTopRatedMovies(apiKey,language,page);
+    }
+
+    public TmdbMovieResponse getUpcomingMovies(int page){
+        return tmdbClient.getUpcomingMovies(apiKey,language,page);
     }
 
 
@@ -152,5 +175,6 @@ public class MovieService {
         }
         return new HashSet<>(genres);
     }
+
 
 }
