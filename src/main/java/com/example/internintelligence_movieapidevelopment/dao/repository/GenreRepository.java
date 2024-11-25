@@ -10,6 +10,9 @@ import java.util.Set;
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     Optional<Genre> findById(Long id);
 
+
+    Optional<Genre> findByTmdbId(Long tmdbId);
+
     List<Genre> findAll();
 
     boolean existsByNameIgnoreCase(String name);

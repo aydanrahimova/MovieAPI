@@ -20,7 +20,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fullName;
     @Column(unique = true)
     private String userName;
     @Column(unique = true)
@@ -28,8 +27,8 @@ public class User {
     private String password;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Review> reviews;
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Watchlist watchlist;
+    @OneToMany
+    private List<Watchlist> watchlist;
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(name = "authority_user",
 //            joinColumns = @JoinColumn(name = "user_id"),

@@ -10,4 +10,6 @@ import java.util.Set;
 public interface PersonRepository extends JpaRepository<Person,Long> {
     List<Person> findAllById(Long id);
     boolean existsByFullNameIgnoreCaseAndBirthDate(String fullName, LocalDate birthDate);
+
+    Person findByTmdbId(Long tmdbId);
 }

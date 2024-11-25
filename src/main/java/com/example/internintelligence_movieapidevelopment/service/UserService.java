@@ -40,7 +40,6 @@ public class UserService {
             throw new IllegalArgumentException("Illegal input for confirm password");
         }
         User user = userMapper.toEntity(requestDto);
-        user.setWatchlist(new Watchlist());
         userRepository.save(user);
         log.info("User successfully added");
         return userMapper.toDto(user);

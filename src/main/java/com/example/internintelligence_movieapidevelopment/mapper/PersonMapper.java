@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface PersonMapper {
     Person toEntity(PersonRequestDto requestDto);
+    Person toEntity2(PersonOverviewDto overviewDto);
     PersonResponseDto toDto(Person person);
     PersonOverviewDto toOverviewDto(Person person);
     void mapForUpdate(@MappingTarget Person person,PersonRequestDto requestDto);

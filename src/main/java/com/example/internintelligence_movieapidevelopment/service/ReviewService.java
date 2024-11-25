@@ -59,8 +59,8 @@ public class ReviewService {
         review.setMovie(movie);
         review.setUser(user);
 
-        log.info("Updating IMDb rating for movie with ID: {}", movie.getId());
-        updateIMDbRating(movie, review.getRating());
+//        log.info("Updating IMDb rating for movie with ID: {}", movie.getId());
+//        updateIMDbRating(movie, review.getRating());
 
         reviewRepository.save(review);
         log.info("Review successfully added for movie with ID: {}", movie.getId());
@@ -162,14 +162,14 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
         log.info("Successfully deleted.");
     }
-
-    private void updateIMDbRating(Movie movie, Integer rating) {
-        if (movie.getIMDbRating() == null) {
-            movie.setIMDbRating(Double.valueOf(rating));
-        } else {
-            movie.setIMDbRating(calculateNewIMDbRating(movie.getIMDbRating(), rating));
-        }
-    }
+//
+//    private void updateIMDbRating(Movie movie, Integer rating) {
+//        if (movie.getIMDbRating() == null) {
+//            movie.setIMDbRating(Double.valueOf(rating));
+//        } else {
+//            movie.setIMDbRating(calculateNewIMDbRating(movie.getIMDbRating(), rating));
+//        }
+//    }
 
     private double calculateNewIMDbRating(double currentIMDbRating, int newRating) {
         return (currentIMDbRating + newRating) / 2;

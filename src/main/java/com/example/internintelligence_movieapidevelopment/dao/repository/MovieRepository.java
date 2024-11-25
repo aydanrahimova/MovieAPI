@@ -2,6 +2,7 @@ package com.example.internintelligence_movieapidevelopment.dao.repository;
 
 import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,10 @@ import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
     Optional<Movie> findById(Long id);
+
+    List<Movie> findByGenres_TmdbId(Long genresId, Pageable pageable);
+
+    Optional<Movie> findByTmdbId(Long tmdbId);
 
     //method for handling n+1 problem
 //    @EntityGraph(attributePaths = {"genres", "cast"})

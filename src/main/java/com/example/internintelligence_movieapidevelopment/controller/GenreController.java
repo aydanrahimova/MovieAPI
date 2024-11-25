@@ -20,6 +20,11 @@ public class GenreController {
 
     private final GenreService genreService;
 
+    @PostMapping("addTmdb")
+    public List<GenreOverviewDto> add(){
+        return genreService.fetchAllGenres();
+    }
+
     @GetMapping("/{id}")
     public GenreResponseDto getGenreByID(
             @PathVariable Long id,

@@ -18,6 +18,7 @@ public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long tmdbId;
     @Column(unique = true)
     private String name;
     private String description;

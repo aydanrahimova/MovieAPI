@@ -12,6 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
     Genre toEntity(GenreRequestDto requestDto);
+    Genre toEntity2(GenreOverviewDto overviewDto);
 
     @Mapping(source = "movies", target = "movies", ignore = true)
     GenreResponseDto toDto(Genre genre);

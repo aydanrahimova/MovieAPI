@@ -1,5 +1,6 @@
 package com.example.internintelligence_movieapidevelopment.service;
 
+import com.example.internintelligence_movieapidevelopment.client.TmdbClient;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Genre;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
 import com.example.internintelligence_movieapidevelopment.dao.repository.GenreRepository;
@@ -15,6 +16,7 @@ import com.example.internintelligence_movieapidevelopment.mapper.MovieMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class GenreService {
+    @Value("${tmdb.api-key}")
+    private String apiKey;
 
     private final GenreRepository genreRepository;
     private final GenreMapper genreMapper;
+    private final TmdbClient tmdbClient;
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
+
+    public List<GenreOverviewDto> fetchAllGenres(){
+        List<GenreOverviewDto> genreOverview = tmdbClient.fetchAllGenres(apiKey).getGenres();
+        List<Genre> genres = genreOverview.stream().map(genreMapper::toEntity2).toList();
+        genreRepository.saveAll(genres);
+        return genreOverview;
+    }
 
     public GenreResponseDto getByID(Long id, Pageable pageable) {
         Genre genre = genreRepository.findById(id).orElseThrow(() -> {

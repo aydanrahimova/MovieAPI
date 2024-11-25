@@ -10,10 +10,14 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface MovieMapper {
 
-    @Mapping(target = "peopleOverview", source = "cast")
+//    @Mapping(target = "peopleOverview", source = "cast")
     MovieResponseDto toDto(Movie movie);
 
+    Movie toEntity(MovieOverviewDto movieOverviewDto);
+
     Movie toEntity(MovieRequestDto movieRequestDto);
+
+    Movie toEntity2(MovieResponseDto responseDto);
 
     MovieOverviewDto toOverviewDto(Movie movie);
 

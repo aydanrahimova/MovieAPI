@@ -1,6 +1,5 @@
 package com.example.internintelligence_movieapidevelopment.dao.entity;
 
-import com.example.internintelligence_movieapidevelopment.enums.AgeRating;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,21 +20,20 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long tmdbId;
     private String title;
     private String overview;
     private LocalDate releaseDate;
-    @Column(name = "imdb_rating")
-    private Double IMDbRating;//average hesablayir commentlerden
-    @Enumerated(EnumType.STRING)
-    private AgeRating ageRating;
-    private Integer duration;
+    private Double voteAverage;
+    private Integer runtime;
+    private Double popularity;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "genre_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<Genre> genres;
+    private List<Genre> genres;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private Set<Review> reviews;
@@ -45,7 +44,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private Set<Person> cast;
+    private List<Person> cast;
 
     @OneToMany(mappedBy = "movie",cascade = CascadeType.ALL)
     private Set<WatchlistMovie> watchlistMovies;

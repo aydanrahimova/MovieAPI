@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonResponseDto {
-    private String fullName;
+    private String name;
     private LocalDate birthDate;
     private String biography;
     private List<MovieOverviewDto> movies;

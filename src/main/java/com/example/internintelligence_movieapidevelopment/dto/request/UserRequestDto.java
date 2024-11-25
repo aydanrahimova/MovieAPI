@@ -12,12 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRequestDto {
-    @NotBlank(message = "Full name is required")
-    @Size(min = 2,max = 50,message = "The length of full name must be in range of 2 to 50")
-    private String fullName;
 
     @NotBlank(message = "Username is required")
-    @Size(min = 2,max = 50,message = "The length of username must be in range of 2 to 50")
+    @Size(min = 2, max = 50, message = "The length of username must be in range of 2 to 50")
     private String userName;
 
     @NotBlank(message = "Email is required")//email validation

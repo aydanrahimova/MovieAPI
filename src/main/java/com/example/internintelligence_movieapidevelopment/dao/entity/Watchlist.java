@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -19,9 +21,12 @@ public class Watchlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "watchlist")
+    @ManyToOne
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "watchlist")
-    private List<WatchlistMovie> movies;
+    @ManyToOne
+    private Movie movie;
+
+    @CreationTimestamp
+    private LocalDate addAt;
 }

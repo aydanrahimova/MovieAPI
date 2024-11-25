@@ -20,6 +20,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long tmdbId;
     private String fullName;
     @Enumerated(EnumType.STRING)
     private PersonRole role;

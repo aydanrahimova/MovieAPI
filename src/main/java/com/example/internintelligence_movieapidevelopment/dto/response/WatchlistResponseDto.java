@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class WatchlistResponseDto {
-    private List<WatchlistMovieResponseDto> movies;
-    private int totalPages;
-    private int currentPage;
-    private int pageSize;
+    private String movieName;
+    private LocalDate addAt;
 }

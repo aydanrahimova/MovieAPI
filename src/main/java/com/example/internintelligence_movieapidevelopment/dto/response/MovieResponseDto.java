@@ -1,6 +1,5 @@
 package com.example.internintelligence_movieapidevelopment.dto.response;
 
-import com.example.internintelligence_movieapidevelopment.enums.AgeRating;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,14 +12,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MovieResponseDto {
+    @JsonProperty("tmdb_id")
+    private Long tmdbId;
     private String title;
     private String overview;
     @JsonProperty("release_date")
     private LocalDate releaseDate;
-    private AgeRating ageRating;
-    private Integer duration;
-    private List<PersonOverviewDto> peopleOverview;
+    private Boolean adult;
+    private Integer runtime;
+    private List<PersonOverviewDto> cast;
     private List<GenreOverviewDto> genres;
     @JsonProperty("vote_average")
-    private Double IMDbRating;
+    private Double voteAverage;
 }
