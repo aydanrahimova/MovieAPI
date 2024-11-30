@@ -17,6 +17,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
 
     List<Movie> findByGenres_TmdbId(Long genresId, Pageable pageable);
 
+    boolean existsByTmdbId(Long tmdbId);
+
     Optional<Movie> findByTmdbId(Long tmdbId);
 
     //method for handling n+1 problem

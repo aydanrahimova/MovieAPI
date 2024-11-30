@@ -7,7 +7,7 @@ import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewR
 import com.example.internintelligence_movieapidevelopment.dao.repository.ReviewVoteRepository;
 import com.example.internintelligence_movieapidevelopment.dao.repository.UserRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.ReviewVoteRequestDto;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_movieapidevelopment.mapper.ReviewVoteMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +30,11 @@ public class ReviewVoteService {
 
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() -> {
             log.error("Failed to vote on review: user ID '{}' doesn't exist", requestDto.getUserId());
-            return new ResourceNotFound("USER_NOT_FOUND");
+            return new ResourceNotFoundException("USER_NOT_FOUND");
         });
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> {
             log.error("Failed to vote on review: review ID '{}' doesn't exist", reviewId);
-            return new ResourceNotFound("REVIEW_NOT_FOUND");
+            return new ResourceNotFoundException("REVIEW_NOT_FOUND");
         });
 
         ReviewVote vote = reviewVoteMapper.toEntity(requestDto);

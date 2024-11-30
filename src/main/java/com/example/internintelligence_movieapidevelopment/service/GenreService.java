@@ -10,7 +10,7 @@ import com.example.internintelligence_movieapidevelopment.dto.response.GenreOver
 import com.example.internintelligence_movieapidevelopment.dto.response.GenreResponseDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_movieapidevelopment.mapper.GenreMapper;
 import com.example.internintelligence_movieapidevelopment.mapper.MovieMapper;
 import jakarta.transaction.Transactional;
@@ -47,7 +47,7 @@ public class GenreService {
     public GenreResponseDto getByID(Long id, Pageable pageable) {
         Genre genre = genreRepository.findById(id).orElseThrow(() -> {
             log.error("Genre with ID {} not found", id);
-            return new ResourceNotFound("GENRE_NOT_FOUND");
+            return new ResourceNotFoundException("GENRE_NOT_FOUND");
         });
 
         log.info("Genre found with ID: {}. Proceeding to retrieve movies...", id);
@@ -90,7 +90,7 @@ public class GenreService {
         log.info("Attempting edit genre with ID: {}", id);
         Genre genre = genreRepository.findById(id).orElseThrow(() -> {
             log.error("Failed to update genre. Genre ID '{}' doesn't exist", id);
-            return new ResourceNotFound("GENRE_NOT_FOUND");
+            return new ResourceNotFoundException("GENRE_NOT_FOUND");
         });
         genreMapper.mapForUpdate(genre, requestDto);
         genreRepository.save(genre);
@@ -102,7 +102,7 @@ public class GenreService {
 
         if (!genreRepository.existsById(id)) {
             log.error("Failed to delete genre. Genre '{}' doesn't exists.", id);
-            throw new ResourceNotFound("GENRE_NOT_FOUND");
+            throw new ResourceNotFoundException("GENRE_NOT_FOUND");
         }
 
         genreRepository.deleteById(id);

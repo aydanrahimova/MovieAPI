@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonOverviewDto {
-    @JsonProperty("id")
-    private Long tmdbId;
+//    @JsonProperty("id")
+//    private Long tmdbId;
     private String name;
     private String character;
 }

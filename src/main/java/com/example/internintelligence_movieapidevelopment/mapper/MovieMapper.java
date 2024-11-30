@@ -1,9 +1,11 @@
 package com.example.internintelligence_movieapidevelopment.mapper;
 
+import com.example.internintelligence_movieapidevelopment.client.clientResponse.TmdbPersonOverview;
 import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieRequestDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.MovieResponseDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.PersonOverviewDto;
 import org.mapstruct.*;
 
 
@@ -14,6 +16,8 @@ public interface MovieMapper {
     MovieResponseDto toDto(Movie movie);
 
     Movie toEntity(MovieOverviewDto movieOverviewDto);
+
+    PersonOverviewDto fromTmdbToOverviewDto(TmdbPersonOverview tmdbPersonOverview);
 
     Movie toEntity(MovieRequestDto movieRequestDto);
 

@@ -9,7 +9,7 @@ import com.example.internintelligence_movieapidevelopment.dto.response.MovieOver
 import com.example.internintelligence_movieapidevelopment.dto.response.PersonOverviewDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.PersonResponseDto;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_movieapidevelopment.mapper.MovieMapper;
 import com.example.internintelligence_movieapidevelopment.mapper.PersonMapper;
 import jakarta.transaction.Transactional;
@@ -35,7 +35,7 @@ public class PersonService {
         log.info("Attempting get person with ID {}", id);
         Person person = personRepository.findById(id).orElseThrow(() -> {
             log.error("Person with ID {} not found", id);
-            return new ResourceNotFound("PERSON_NOT_FOUND");
+            return new ResourceNotFoundException("PERSON_NOT_FOUND");
         });
         log.info("Person found with ID: {}. Proceeding to retrieve movies.", id);
         List<Movie> movies = movieRepository.findMovieByCastId(id);
@@ -69,7 +69,7 @@ public class PersonService {
         log.info("Attempting update a person with {} id", id);
         Person person = personRepository.findById(id).orElseThrow(() -> {
             log.error("Failed to update: Person with ID {} not found.", id);
-            return new ResourceNotFound("PERSON_NOT_FOUND");
+            return new ResourceNotFoundException("PERSON_NOT_FOUND");
         });
 
         log.info("Try to save an updated person");
@@ -85,7 +85,7 @@ public class PersonService {
         log.info("Attempting delete a person with ID '{}'", id);
         if (!personRepository.existsById(id)) {
             log.error("Failed to delete: Person with ID {} not found.", id);
-            throw new ResourceNotFound("PERSON_NOT_FOUND");
+            throw new ResourceNotFoundException("PERSON_NOT_FOUND");
         }
         personRepository.deleteById(id);
         log.info("Successfully deleted person with ID: '{}'", id);

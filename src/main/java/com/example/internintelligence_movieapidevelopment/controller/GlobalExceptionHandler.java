@@ -1,9 +1,8 @@
 package com.example.internintelligence_movieapidevelopment.controller;
 
 import com.example.internintelligence_movieapidevelopment.dto.response.ExceptionDto;
-import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
+import com.example.internintelligence_movieapidevelopment.exception.*;
 import com.example.internintelligence_movieapidevelopment.exception.IllegalArgumentException;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,12 +17,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ResourceNotFound.class)
-    public ExceptionDto handler(ResourceNotFound resourceNotFound) {
-        return new ExceptionDto(resourceNotFound.getMessage());
-    }
-
     //validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handler(MethodArgumentNotValidException ex) {
@@ -36,15 +29,41 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)//409
-    @ExceptionHandler(AlreadyExistException.class)
-    public ExceptionDto handler(AlreadyExistException alreadyExistException) {
-        return new ExceptionDto(alreadyExistException.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)//400
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ExceptionDto handlerIllegalArgumentException(IllegalArgumentException ex) {
+        return new ExceptionDto(ex.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ExceptionDto handler(IllegalArgumentException illegalArgumentException) {
-        return new ExceptionDto(illegalArgumentException.getMessage());
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)//401
+    @ExceptionHandler(UnauthorizedException.class)
+    public ExceptionDto handleUnauthorizedException(UnauthorizedException ex) {
+        return new ExceptionDto(ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)//403
+    @ExceptionHandler(ForbiddenException.class)
+    public ExceptionDto handlerForbiddenException(ForbiddenException ex) {
+        return new ExceptionDto(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)//404
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ExceptionDto handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return new ExceptionDto(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)//409
+    @ExceptionHandler(AlreadyExistException.class)
+    public ExceptionDto handleAlreadyExistException(AlreadyExistException ex) {
+        return new ExceptionDto(ex.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ExceptionDto handleGenericException(RuntimeException ex){
+        return new ExceptionDto(ex.getMessage());
+    }
+
+
+
 }

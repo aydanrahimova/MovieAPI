@@ -1,14 +1,13 @@
 package com.example.internintelligence_movieapidevelopment.service;
 
 import com.example.internintelligence_movieapidevelopment.dao.entity.User;
-import com.example.internintelligence_movieapidevelopment.dao.entity.Watchlist;
 import com.example.internintelligence_movieapidevelopment.dao.repository.UserRepository;
 import com.example.internintelligence_movieapidevelopment.dto.request.ChangePasswordDto;
 import com.example.internintelligence_movieapidevelopment.dto.request.UserRequestDto;
 import com.example.internintelligence_movieapidevelopment.dto.response.UserResponseDto;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
 import com.example.internintelligence_movieapidevelopment.exception.IllegalArgumentException;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_movieapidevelopment.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class UserService {
             log.warn("User with {} email is exist", requestDto.getEmail());
             throw new AlreadyExistException("User with that email exists");
         }
-        if (userRepository.existsByUserName(requestDto.getUserName())) {
+        if (userRepository.existsByUsername(requestDto.getUserName())) {
             log.warn("User with {} username is exist", requestDto.getUserName());
             throw new AlreadyExistException("User with that user exists,try another one");
         }
@@ -49,7 +48,7 @@ public class UserService {
         log.info("Attempting get user with {} ID",id);
         User user = userRepository.findById(id).orElseThrow(()->{
             log.warn("User with {} id is not found",id);
-            return new ResourceNotFound("USER_NOT_FOUND");
+            return new ResourceNotFoundException("USER_NOT_FOUND");
         });
         return userMapper.toDto(user);
     }
@@ -67,7 +66,7 @@ public class UserService {
         log.info("Attempting delete user ID '{}'",id);
         if(!userRepository.existsById(id)){
             log.info("Failed to delete: user ID '{}' doesn't exist",id);
-            throw new ResourceNotFound("USER_NOT_FOUND");
+            throw new ResourceNotFoundException("USER_NOT_FOUND");
         }
         userRepository.deleteById(id);
         log.info("User successfully deleted");
@@ -77,7 +76,7 @@ public class UserService {
         log.info("Try to change a password for user {}",id);
         User user = userRepository.findById(id).orElseThrow(()->{
             log.warn("User with {} id doesn't exist",id);
-            return new ResourceNotFound("USER_NOT_FOUND");
+            return new ResourceNotFoundException("USER_NOT_FOUND");
         });
         if(!user.getPassword().equals(changePassword.getCurrentPassword())){
             log.warn("Wrong password for user {} is entered",id);

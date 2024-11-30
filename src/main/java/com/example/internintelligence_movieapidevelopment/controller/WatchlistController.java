@@ -18,12 +18,12 @@ public class WatchlistController {
     private final WatchlistService watchlistService;
 
 
-    //needs security but now enter with userId
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{userId}/{movieId}")
-    public WatchlistResponseDto addToWatchlist(@PathVariable Long userId, @PathVariable Long movieId) {
-        return watchlistService.addToWatchlist(userId, movieId);
-    }
+//    //needs security but now enter with userId
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PostMapping("/{userId}/{movieId}")
+//    public WatchlistResponseDto addToWatchlist(@PathVariable Long userId, @PathVariable Long movieId) {
+//        return watchlistService.addToWatchlist(userId, movieId);
+//    }
 
     @GetMapping("/{userId}")
     public Page<WatchlistResponseDto> getWatchlist(

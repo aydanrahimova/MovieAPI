@@ -12,7 +12,7 @@ import com.example.internintelligence_movieapidevelopment.dto.request.ReviewRequ
 import com.example.internintelligence_movieapidevelopment.dto.response.ReviewResponseDto;
 import com.example.internintelligence_movieapidevelopment.enums.VoteType;
 import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
-import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFound;
+import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_movieapidevelopment.mapper.ReviewMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,12 +41,12 @@ public class ReviewService {
 
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> {
             log.error("Movie with ID {} not found", movieId);
-            return new ResourceNotFound("MOVIE_NOT_FOUND");
+            return new ResourceNotFoundException("MOVIE_NOT_FOUND");
         });
 
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() -> {
             log.error("User with ID {} not found", requestDto.getUserId());
-            return new ResourceNotFound("USER_NOT_FOUND");
+            return new ResourceNotFoundException("USER_NOT_FOUND");
         });
 
         if (reviewRepository.existsByUserAndMovie(user, movie)) {
@@ -73,12 +72,12 @@ public class ReviewService {
 
         Movie movie = movieRepository.findById(movieId).orElseThrow(()->{
             log.error("Movie ID '{}' not found",movieId);
-            return new ResourceNotFound("MOVIE_NOT_FOUND");
+            return new ResourceNotFoundException("MOVIE_NOT_FOUND");
         });
 
         User user = userRepository.findById(updateDto.getUserId()).orElseThrow(()->{
             log.error("User ID '{}' not found",updateDto.getUserId());
-            return new ResourceNotFound("USER_NOT_FOUND");
+            return new ResourceNotFoundException("USER_NOT_FOUND");
         });
 
 
@@ -89,7 +88,7 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(()->{
             log.error("Failed to edit a review: review ID '{}' not found.",reviewId);
-            return new ResourceNotFound("REVIEW_NOT_FOUND");
+            return new ResourceNotFoundException("REVIEW_NOT_FOUND");
         });
 
 
@@ -105,12 +104,12 @@ public class ReviewService {
 
         if(!movieRepository.existsById(movieId)){
             log.error("Failed to get review: movie ID '{}' not found",movieId);
-            throw new ResourceNotFound("MOVIE_NOT_FOUND");
+            throw new ResourceNotFoundException("MOVIE_NOT_FOUND");
         }
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(()->{
             log.error("Failed to get review: review ID '{}' not found",reviewId);
-            return new ResourceNotFound("REVIEW_NOT_FOUND");
+            return new ResourceNotFoundException("REVIEW_NOT_FOUND");
         });
 
         List<ReviewVote> votes = reviewVoteRepository.findByReview(review);
@@ -151,12 +150,12 @@ public class ReviewService {
 
         if(!movieRepository.existsById(movieId)){
             log.error("Failed to delete review: movie ID '{}' not found",movieId);
-            throw new ResourceNotFound("MOVIE_NOT_FOUND");
+            throw new ResourceNotFoundException("MOVIE_NOT_FOUND");
         }
 
         if(!reviewRepository.existsById(reviewId)){
             log.error("Failed to delete review: review ID '{}' not found",reviewId);
-            throw new ResourceNotFound("REVIEW_NOT_FOUND");
+            throw new ResourceNotFoundException("REVIEW_NOT_FOUND");
         }
 
         reviewRepository.deleteById(reviewId);

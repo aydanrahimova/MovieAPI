@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class MovieRequestDto {
 
+    @NotNull(message = "TMDB ID can't be null.")
+    private Long tmdbId;
+
     @NotBlank(message = "Tittle can't be blank.")
     @Size(min = 2, max = 100, message = "Tittle must be between 2 and 100 characters.")
     private String title;
@@ -25,6 +28,9 @@ public class MovieRequestDto {
     @NotNull(message = "Release date is required")
     @PastOrPresent(message = "Released date can't be in the future")
     private LocalDate releaseDate;
+
+    @NotNull(message = "Vote average can't be null")
+    private Double voteAverage;
 
     @Min(30)
     @Max(240)
