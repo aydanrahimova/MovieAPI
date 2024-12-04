@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,13 +25,10 @@ public class User implements UserDetails {
     private Integer id;
     @Column(unique = true)
     private String username;
-    @Column(unique = true)
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Review> reviews;
-    @OneToMany
-    private List<Watchlist> watchlist;
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "user")
+    private List<Watchlist> watchlist = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -43,7 +41,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities.stream() // Stream through the authorities
+        return authorities.stream()
                 .map(authority -> new SimpleGrantedAuthority("ROLE_" + authority.getName())) // Convert each Authority to GrantedAuthority
                 .collect(Collectors.toList());
     }

@@ -14,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class MovieRequestDto {
 
-    @NotNull(message = "TMDB ID can't be null.")
-    private Long tmdbId;
+    @NotNull(message = "TMDB id can't be null")
+    private Integer tmdbId;
 
     @NotBlank(message = "Tittle can't be blank.")
     @Size(min = 2, max = 100, message = "Tittle must be between 2 and 100 characters.")

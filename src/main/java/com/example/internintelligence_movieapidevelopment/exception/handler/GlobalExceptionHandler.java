@@ -1,6 +1,6 @@
-package com.example.internintelligence_movieapidevelopment.controller;
+package com.example.internintelligence_movieapidevelopment.exception.handler;
 
-import com.example.internintelligence_movieapidevelopment.dto.response.ExceptionDto;
+import com.example.internintelligence_movieapidevelopment.exception.response.ExceptionDto;
 import com.example.internintelligence_movieapidevelopment.exception.*;
 import com.example.internintelligence_movieapidevelopment.exception.IllegalArgumentException;
 import org.springframework.http.HttpStatus;
@@ -41,12 +41,6 @@ public class GlobalExceptionHandler {
         return new ExceptionDto(ex.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)//403
-    @ExceptionHandler(ForbiddenException.class)
-    public ExceptionDto handlerForbiddenException(ForbiddenException ex) {
-        return new ExceptionDto(ex.getMessage());
-    }
-
     @ResponseStatus(HttpStatus.NOT_FOUND)//404
     @ExceptionHandler(ResourceNotFoundException.class)
     public ExceptionDto handleResourceNotFoundException(ResourceNotFoundException ex) {
@@ -60,10 +54,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ExceptionDto handleGenericException(RuntimeException ex){
+    public ExceptionDto handleGenericException(RuntimeException ex) {
         return new ExceptionDto(ex.getMessage());
     }
-
 
 
 }

@@ -17,8 +17,7 @@ import java.util.List;
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long tmdbId;
+    private Integer id;
     @Column(unique = true)
     private String name;
     private String description;

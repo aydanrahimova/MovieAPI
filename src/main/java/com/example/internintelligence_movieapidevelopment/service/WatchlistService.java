@@ -1,19 +1,21 @@
 package com.example.internintelligence_movieapidevelopment.service;
 
-import com.example.internintelligence_movieapidevelopment.client.TmdbClient;
+import com.example.internintelligence_movieapidevelopment.dao.entity.Movie;
+import com.example.internintelligence_movieapidevelopment.dao.entity.User;
+import com.example.internintelligence_movieapidevelopment.dao.entity.Watchlist;
 import com.example.internintelligence_movieapidevelopment.dao.repository.*;
 import com.example.internintelligence_movieapidevelopment.dto.response.WatchlistResponseDto;
+import com.example.internintelligence_movieapidevelopment.exception.AlreadyExistException;
 import com.example.internintelligence_movieapidevelopment.exception.ResourceNotFoundException;
-import com.example.internintelligence_movieapidevelopment.mapper.GenreMapper;
-import com.example.internintelligence_movieapidevelopment.mapper.MovieMapper;
 import com.example.internintelligence_movieapidevelopment.mapper.WatchlistMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -21,98 +23,77 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class WatchlistService {
 
-    private final MovieMapper movieMapper;
-    @Value("${tmdb.api-key}")
-    private String apiKey;
-
-    @Value("${tmdb.default-language}")
-    private String language;
-
     private final WatchlistRepository watchlistRepository;
-    private final GenreRepository genreRepository;
-    private final GenreMapper genreMapper;
-    private final TmdbClient tmdbClient;
     private final WatchlistMapper watchlistMapper;
     private final MovieRepository movieRepository;
-    private final MovieService movieService;
     private final UserRepository userRepository;
 
 
-//    public WatchlistResponseDto addToWatchlist(Long userId, Long movieId) {
-//        log.info("Attempting to add movie ID '{}' to user's ID '{}' watchlist.", movieId, userId);
-//        log.info("Firstly attempting to find movie from local DB.");
-//
-//        Movie movie = movieRepository.findByTmdbId(movieId).orElseGet(() -> {
-//            log.info("Movie not found in local DB, so it tries to get movie from TMDB.");
-//            return movieMapper.toEntity(movieService.fetchAndSaveMovie(movieId));
-//        });
-//
-//        System.out.println(movie);
-//        System.out.println(movie.getId());
-//        System.out.println(movie.getTitle());
-//
-//        User user = userRepository.findById(userId).orElseThrow(() -> {
-//            log.error("Failed to add movie to watchlist: user ID '{}' not found", userId);
-//            return new ResourceNotFound("USER_NOT_FOUND");
-//        });
-//
-//        if (watchlistRepository.existsByUserAndMovie(user, movie)) {
-//            log.warn("Movie already exists in the watchlist.");
-//            throw new AlreadyExistException("MOVIE_ALREADY_EXISTS_IN_WATCHLIST");
-//        }
-//
-//        Watchlist watchlist = new Watchlist();
-//        watchlist.setUser(user);
-//        watchlist.setMovie(movie);
-//        watchlistRepository.save(watchlist);
-//
-//        log.info("Successfully added movie ID '{}' to user ID '{}' watchlist", movieId, userId);
-//        return watchlistMapper.toDto(watchlist);
-//    }
+    public WatchlistResponseDto addToWatchlist(Integer movieId) {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Attempting to add movie ID '{}' to user's - {} watchlist.", movieId, currentUser);
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> {
+            log.warn("Failed to add movie to watchlist: Movie with ID {} not found", movieId);
+            return new ResourceNotFoundException("MOVIE_NOT_FOUND");
+        });
 
+        User user = userRepository.findByUsername(currentUser).orElseThrow(() -> {
+            log.warn("Failed to add movie to watchlist: user '{}' not found", currentUser);
+            return new ResourceNotFoundException("USER_NOT_FOUND");
+        });
 
-    public Page<WatchlistResponseDto> getWatchlist(Long userId, Pageable pageable) {
-        log.info("Attempting to get user's ID '{}' watchlist", userId);
-//       return watchlistRepository.findAllByUser(userRepository.findById(userId).orElseThrow(()->{
-//            log.warn("User not found.");
-//            return new ResourceNotFound("USER NOT FOUND");
-//        }),pageable).map(watchlistMapper::toDto);
-        Page<WatchlistResponseDto> result = watchlistRepository.findAllByUser(userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.warn("User not found.");
-                    return new ResourceNotFoundException("USER NOT FOUND");
-                }), pageable).map(watchlistMapper::toDto);
-
-        if (result.isEmpty()) {
-            log.info("User's watchlist is empty.");
+        if (watchlistRepository.existsByUserAndMovie(user, movie)) {
+            log.warn("Movie already exists in the watchlist.");
+            throw new AlreadyExistException("MOVIE_ALREADY_EXISTS_IN_WATCHLIST");
         }
-        return result;
 
+        Watchlist watchlist = new Watchlist();
+        watchlist.setUser(user);
+        watchlist.setMovie(movie);
+        watchlistRepository.save(watchlist);
+
+        log.info("Successfully added movie ID '{}' to user '{}' watchlist", movieId, currentUser);
+        return watchlistMapper.toDto(watchlist);
     }
 
 
-//    public void deleteFromWatchlist(Long userId, Long movieId) {
-//        log.info("Attempting delete movie ID '{}' to user ID '{}' watchlist", movieId, userId);
-//
-//        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> {
-//            log.error("Failed to delete movie to watchlist: movie ID '{}' not found", movieId);
-//            return new ResourceNotFound("MOVIE_NOT_FOUND");
-//        });
-//
-//        User user = userRepository.findById(userId).orElseThrow(() -> {
-//            log.error("Failed to delete movie from watchlist: user ID '{}' not found", userId);
-//            return new ResourceNotFound("USER_NOT_FOUND");
-//        });
-//
-//        Watchlist watchlist = user.getWatchlist();
-//        WatchlistMovie watchlistMovie = watchlistMovieRepository.findByWatchlistAndMovie(watchlist, movie).orElseThrow(() -> {
-//            log.info("Failed to delete movie from watchlist: movie ID '{}' not found in watchlist", movieId);
-//            return new ResourceNotFound("MOVIE_NOT_FOUND_IN_WATCHLIST");
-//        });
-//
-//        watchlistMovieRepository.delete(watchlistMovie);
-//
-//        log.info("Successfully deleted movie ID '{}' from user ID '{}' watchlist", movieId, userId);
-//    }
+    public List<WatchlistResponseDto> getWatchlist() {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Attempting to get user's watchlist - '{}' ", currentUser);
+        User user = userRepository.findByUsername(currentUser).orElseThrow(() -> {
+            log.warn("Failed to get watchlist: user '{}' not found", currentUser);
+            return new ResourceNotFoundException("USER_NOT_FOUND");
+        });
+        List<Watchlist> watchlist = watchlistRepository.findAllByUser(user);
+        return watchlist
+                .stream()
+                .map(watchlistMapper::toDto)
+                .toList();
+    }
+
+
+    public void deleteFromWatchlist(Integer movieId) {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Attempting to delete movie ID '{}' from user's watchlist-{}", movieId, currentUser);
+
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> {
+            log.error("Failed to delete movie from watchlist: movie ID '{}' not found", movieId);
+            return new ResourceNotFoundException("MOVIE_NOT_FOUND");
+        });
+
+        User user = userRepository.findByUsername(currentUser).orElseThrow(() -> {
+            log.error("Failed to delete movie from watchlist: user '{}' not found", currentUser);
+            return new ResourceNotFoundException("USER_NOT_FOUND");
+        });
+
+        Watchlist watchlist = watchlistRepository.findByUserAndMovie(user, movie).orElseThrow(() -> {
+            log.error("Failed to find movie ID '{}' in user '{}' watchlist", movieId, currentUser);
+            return new ResourceNotFoundException("WATCHLIST_ENTRY_NOT_FOUND");
+        });
+
+        watchlistRepository.delete(watchlist);
+        log.info("Successfully deleted movie ID '{}' from user '{}' watchlist", movieId, currentUser);
+    }
+
 
 }

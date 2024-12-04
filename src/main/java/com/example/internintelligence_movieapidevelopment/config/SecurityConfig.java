@@ -31,9 +31,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(SecurityUrls.PERMIT_ALL.getUrls()).permitAll()
-//                        .requestMatchers(SecurityUrls.ANY_AUTHENTICATED.getUrls()).authenticated()
+                        .requestMatchers(SecurityUrls.ANY_AUTHENTICATED.getUrls()).authenticated()
                         .requestMatchers(SecurityUrls.USER.getUrls()).hasAnyAuthority(Role.ROLE_USER.name())
-                        .requestMatchers(SecurityUrls.ADMIN.getUrls()).hasAnyAuthority(Role.ROLE_ADMIN.name()))
+                        .requestMatchers(SecurityUrls.ADMIN.getUrls()).hasAnyAuthority(Role.ROLE_ADMIN.name())
+                        .requestMatchers(SecurityUrls.ADMIN_AND_USER.getUrls()).hasAnyAuthority(Role.ROLE_USER.name(),Role.ROLE_ADMIN.name()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         ;

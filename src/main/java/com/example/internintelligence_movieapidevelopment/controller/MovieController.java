@@ -2,15 +2,13 @@ package com.example.internintelligence_movieapidevelopment.controller;
 
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieFilterDto;
 import com.example.internintelligence_movieapidevelopment.dto.request.MovieRequestDto;
-import com.example.internintelligence_movieapidevelopment.dto.response.MovieOverviewDto;
-import com.example.internintelligence_movieapidevelopment.dto.response.PersonOverviewDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.MovieResponseDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.PersonResponseDto;
+import com.example.internintelligence_movieapidevelopment.dto.response.ReviewResponse;
 import com.example.internintelligence_movieapidevelopment.service.MovieService;
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -26,42 +24,63 @@ public class MovieController {
 
     private final MovieService movieService;
 
-    @Operation(summary = "Retrieve a movie by ID", description = "This endpoint attempts to retrieve the movie from the local database.")
     @GetMapping("/{id}")
-    public MovieOverviewDto getMovieByID(@PathVariable Long id) {
+    public MovieResponseDto getMovieByID(@PathVariable Integer id) {
         return movieService.getMovieById(id);
     }
 
-    @Operation(summary = "Retrieve the cast of the movie from TMDB.")
-    @GetMapping("/{id}/cast")
-    public List<PersonOverviewDto> getCast(@PathVariable Long id) {
-        return movieService.getCastOfMovie(id);
-    }
-
-    @Operation(summary = "Retrieve top 100 popular movies for the week from the local database.", description = "This endpoint retrieves the top 100 popular movies for the week from the local database, which is updated weekly. User also can apply filter for searching.")
     @GetMapping("/get-all")
-    public Page<MovieOverviewDto> getMovies(@PageableDefault(sort = "popularity", direction = Sort.Direction.DESC) Pageable pageable, MovieFilterDto movieFilterDto) {
+    public Page<MovieResponseDto> getMovies(@PageableDefault Pageable pageable, MovieFilterDto movieFilterDto) {
         return movieService.getMovies(pageable, movieFilterDto);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/add")
-    public MovieOverviewDto addMovie(@Validated @RequestBody MovieRequestDto requestDto) {
+    public MovieResponseDto addMovie(@Validated @RequestBody MovieRequestDto requestDto) {
         return movieService.addMovie(requestDto);
     }
 
     @PutMapping("/edit/{id}")
-    public MovieOverviewDto editMovie(
-            @PathVariable Long id,
-            @Valid @RequestBody MovieRequestDto movieRequestDto
+    public MovieResponseDto editMovie(
+            @PathVariable Integer id,
+            @Validated @RequestBody MovieRequestDto movieRequestDto
     ) {
         return movieService.editMovie(id, movieRequestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{id}")
-    public void deleteMovie(@PathVariable Long id) {
+    public void deleteMovie(@PathVariable Integer id) {
         movieService.deleteMovie(id);
     }
+
+    @GetMapping("{id}/reviews")
+    public List<ReviewResponse> getReview(@PathVariable Integer id, @RequestParam int page) {
+        return movieService.getReviews(id, page);
+    }
+
+    @GetMapping("/{id}/cast")
+    public List<PersonResponseDto> getCast(@PathVariable Integer id) {
+        return movieService.getCast(id);
+    }
+
+
+    @GetMapping("/popular")
+    public List<MovieResponseDto> getPopularMovies(@RequestParam int page) {
+        return movieService.getPopularMovies(page);
+    }
+
+
+    @GetMapping("/top_rated")
+    public List<MovieResponseDto> getTopRatedMovies(@RequestParam int page) {
+        return movieService.getTopRatedMovies(page);
+    }
+
+
+    @GetMapping("/upcoming")
+    public List<MovieResponseDto> getUpcomingMovies(@RequestParam int page) {
+        return movieService.getUpcomingMovies(page);
+    }
+
 
 }

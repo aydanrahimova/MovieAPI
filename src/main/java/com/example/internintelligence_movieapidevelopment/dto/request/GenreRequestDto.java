@@ -13,6 +13,6 @@ public class GenreRequestDto {
     @NotBlank(message = "Genre name is required")
     private String name;
     @NotBlank(message = "Genre description is required")
-    @Size(min = 2, max = 100, message = "Description must be between 2 and 100 characters.")
+    @Size(min = 2, max = 200, message = "Description must be between 2 and 200 characters.")
     private String description;
 }

@@ -3,11 +3,10 @@ package com.example.internintelligence_movieapidevelopment.controller;
 import com.example.internintelligence_movieapidevelopment.dto.response.WatchlistResponseDto;
 import com.example.internintelligence_movieapidevelopment.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -17,27 +16,22 @@ public class WatchlistController {
 
     private final WatchlistService watchlistService;
 
-
-//    //needs security but now enter with userId
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping("/{userId}/{movieId}")
-//    public WatchlistResponseDto addToWatchlist(@PathVariable Long userId, @PathVariable Long movieId) {
-//        return watchlistService.addToWatchlist(userId, movieId);
-//    }
-
-    @GetMapping("/{userId}")
-    public Page<WatchlistResponseDto> getWatchlist(
-            @PathVariable Long userId,
-            @PageableDefault Pageable pageable
-    ) {
-        return watchlistService.getWatchlist(userId, pageable);
+    @GetMapping("get-all")
+    public List<WatchlistResponseDto> getWatchlist() {
+        return watchlistService.getWatchlist();
     }
 
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @DeleteMapping("{userId}/{movieId}")
-//    public void deleteFromWatchlist(@PathVariable Long userId, @PathVariable Long movieId) {
-//        watchlistService.deleteFromWatchlist(userId, movieId);
-//    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{movieId}")
+    public WatchlistResponseDto addToWatchlist(@PathVariable Integer movieId) {
+        return watchlistService.addToWatchlist(movieId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{movieId}")
+    public void deleteFromWatchlist(@PathVariable Integer movieId) {
+        watchlistService.deleteFromWatchlist(movieId);
+    }
 
 
 }
