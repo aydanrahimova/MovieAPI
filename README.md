@@ -1,24 +1,19 @@
-# Portfolio Management API
+# Movie API
 
 ## Overview
 
-This project is a **RESTful API** designed for managing personal portfolios. Users can securely log in using **JWT (JSON Web Tokens)**, update their own projects, education, work experience, and skills, and view other users' portfolios without modifying them. The API supports basic **CRUD operations** for portfolio sections and ensures data security through **Spring Security**.
+This project is a **RESTful API** designed to provide users with data on **popular**, **incoming**, and **top-rated movies** by fetching information from **TMDb (The Movie Database)** API using **Feign Client**. To improve performance, the API implements **caching**, ensuring that frequent requests for the same movie data are served faster. Additionally, users can **add movies to their personal watchlist**. The API uses **JWT (JSON Web Token)** for user authentication and authorization.
 
 ---
 
-## Important Features
+## Features
 
-- **User Authentication & Authorization**
-  - Users can securely log in using **JWT** tokens.
-  - Portfolio access is protected based on roles; users can only modify their own data while being able to view others' portfolios in a read-only mode.
-
-- **Portfolio Management**
-  - Users can create, update, and delete their **Projects**, **Education**, **Work Experience**, and **Skills**.
-  - Users can view others' portfolios but cannot modify them.
-
-- **Data Security**
-  - Uses **Spring Security** for authentication and authorization.
-  - Protects endpoints using JWT tokens to ensure secure access to portfolio data.
+- **Get Popular Movies**: Fetches a list of popular movies from TMDb.
+- **Get Incoming Movies**: Retrieves movies that are scheduled for release soon.
+- **Get Top-Rated Movies**: Displays the top-rated movies according to TMDb.
+- **Caching**: Caches the movie data to minimize API calls to TMDb and improve response times for frequently requested data.
+- **User Watchlist**: Allows users to add movies to their watchlist and view their saved movies.
+- **JWT Authentication**: Secures the API with JSON Web Tokens for authentication. Only authenticated users can add movies to their watchlist.
 
 ---
 
@@ -26,11 +21,13 @@ This project is a **RESTful API** designed for managing personal portfolios. Use
 
 - **Java** (17+)
 - **Spring Boot** (3.x)
-- **Spring Security** (JWT Authentication)
-- **Spring Data JPA** (Database Interaction)
-- **PostgreSQL** (Database)
+- **Feign Client** (For making HTTP requests to external APIs)
+- **TMDb API** (To fetch movie data)
+- **Spring Cache** (For caching data)
+- **JWT** (For user authentication)
 - **Gradle** (Dependency Management & Build)
-- **MapStruct** (Object Mapping)
+- **PostgreSQL** (Database)
+- **Swagger** (For API documentation)
 
 ---
 
@@ -39,5 +36,5 @@ This project is a **RESTful API** designed for managing personal portfolios. Use
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/portfolio-management-api.git
-cd portfolio-management-api
+git clone https://github.com/yourusername/movie-api.git
+cd movie-api
